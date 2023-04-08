@@ -17,7 +17,7 @@ function GymPostPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const path = location.pathname;
-  const { gymsDetail } = useGymStore();
+  const { gymsDetail, setGymsDetail } = useGymStore();
   const [address, setAddress] = useState('');
   const [map, setMap] = useState({ Ma: 0, La: 0 });
   const [patchMap, setPatchMap] = useState({ Ma: 0, La: 0 });
@@ -85,10 +85,14 @@ function GymPostPage() {
         .patch(`/gyms/${gymsDetail.gymId}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
-        .then(navigate(`/gyms/${gymsDetail.gymId}`))
         .catch(() => {
           alert('입력하신 내용을 확인해주세요');
         });
+      await gymAxios.get(`/gyms/${gymsDetail.gymId}`).then(res => {
+        setGymsDetail(res.data);
+      });
+
+      navigate(`/gyms/${gymsDetail.gymId}`);
     } else {
       const gymsData = {
         gymName: !data.gymName ? gymsDetail.gymName : data.gymName,
